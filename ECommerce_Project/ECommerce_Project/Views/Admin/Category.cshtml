@@ -1,0 +1,165 @@
+﻿
+@{
+    ViewBag.Title = "Category";
+}
+
+@using ECommerce_Project.Models
+@using System.Collections.Generic
+@using System.Collections
+@model List<Category>
+
+@section body{
+    <!-- Modal small-modal -->
+    <div class="modal fade" id="small-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label">Kategori Ekleme</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/Admin/AddCategory" method="post" role="form">
+                        <div class="modal-body">
+                            <input type="hidden" class="form-control" id="campid" name="ID">
+                            <div class="form-group">
+                                <label>Kategori Adı</label>
+                                <input type="text" class="form-control" required id="campname" name="CategoryName">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div class="modal fade" id="brand-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label">Marka Ekleme</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/Admin/AddBrand" method="post" role="form">
+                        <div class="modal-body">
+                            <input type="hidden" class="form-control" id="campid" name="ID">
+                            <div class="form-group">
+                                <label>Marka Adı</label>
+                                <input type="text" class="form-control" required name="BrandName">
+                            </div>
+                            <div class="form-group">
+                                <label>Resim URL</label>
+                                <input type="text" class="form-control" required name="Picture">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Kategoriler
+                </div>
+                <div class="block-controls">
+                    <span aria-hidden="true" class="icon icon-arrow-down icon-size-medium block-control-collapse"></span>
+                    <button class="btn btn-success rounded modalAc" data-toggle="modal" data-target="#small-modal">Yeni Kategori Ekle</button>
+                </div>
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">Kategori Adı</th>
+                                <th style="text-align:center"> Kategoride Bulunan Toplam Ürün Sayısı</th>
+                                <th style="text-align:center"> Kategoride Bulunan Aktif Ürün Sayısı</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Category u in Model)
+                            {
+                                <tr>
+                                    <th style="text-align:center">@u.CategoryName</th>
+
+                                    <td style="text-align:center">@u.Products.Count</td>
+                                    <td style="text-align:center">@u.Products.Count(x => x.isActive == true)</td>
+
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Markalar
+                </div>
+                <div class="block-controls">
+                    <span aria-hidden="true" class="icon icon-arrow-down icon-size-medium block-control-collapse"></span>
+                    <button class="btn btn-success rounded modalAc" data-toggle="modal" data-target="#brand-modal">Yeni Marka Ekle</button>
+                </div>
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center"></th>
+                                <th style="text-align:center">Marka Adı</th>
+                                <th style="text-align:center"> Markada Bulunan Toplam Ürün Sayısı</th>
+                                <th style="text-align:center"> Markada Bulunan Aktif Ürün Sayısı</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Brand u in ViewBag.brand)
+                            {
+                                <tr>
+                                    <td>
+                                        <img style="width:100px;height:100px; display:block; margin:0 auto; text-align:center" src="@u.Picture" />
+                                    </td>
+                                    <th style="text-align:center">@u.BrandName</th>
+
+                                    <td style="text-align:center">@u.Products.Count</td>
+                                    <td style="text-align:center">@u.Products.Count(x => x.isActive == true)</td>
+
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+    <script>
+
+    </script>
+}

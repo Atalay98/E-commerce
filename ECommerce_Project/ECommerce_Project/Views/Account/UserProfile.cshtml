@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewBag.Title = "UserProfile";
+}
+@using System.Collections.Generic
+@using System.Collections
+@using ECommerce_Project.Models
+@model User
+
+<div class="container">
+    <div class="main-body">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block">
+                    <div class="block-heading">
+                        <div class="main-text h2">
+                            Kullanıcı Bilgileri
+                        </div>
+                    </div>
+                    <div class="block-content-outer">
+                        <div class="block-content-inner">
+
+                            <div class="form-group">
+                                <h3 class="col-sm-2">Kullanıcı Adı</h3>
+                                <div class="input-group rounded col-sm-8">
+                                    <span class="input-group-addon input-group-icon">
+                                        <span aria-hidden="true" class="icon icon-user"></span>
+                                    </span>
+                                    <input type="text" readonly class="form-control" value="@Model.Username" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h3 class="col-sm-2">İsim</h3>
+                                <div class="input-group rounded col-sm-8">
+                                    <span class="input-group-addon input-group-icon">
+                                        <span aria-hidden="true" class="icon icon-user"></span>
+                                    </span>
+                                    <input type="text" readonly class="form-control" value="@Model.Name" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h3 class="col-sm-2">Soyisim</h3>
+                                <div class="input-group rounded col-sm-8">
+                                    <span class="input-group-addon input-group-icon">
+                                        <span aria-hidden="true" class="icon icon-user"></span>
+                                    </span>
+                                    <input type="text" readonly class="form-control" value="@Model.Surname" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h3 class="col-sm-2">Email</h3>
+                                <div class="input-group rounded col-sm-8">
+                                    <span class="input-group-addon input-group-icon">
+                                        <span aria-hidden="true" class="icon icon-mail"></span>
+                                    </span>
+                                    <input type="text" readonly class="form-control" value="@Model.Mail" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h3 class="col-sm-2">Doğum Tarihi</h3>
+                                <div class="input-group rounded col-sm-8">
+                                    <span class="input-group-addon input-group-icon">
+                                        <span aria-hidden="true" class="icon glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    <input type="text" readonly class="form-control" value="@Model.Birthday" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h3 class="col-sm-2">Telefon</h3>
+                                <div class="input-group rounded col-sm-8">
+                                    <span class="input-group-addon input-group-icon">
+                                        <span aria-hidden="true" class="icon icon-telephone"></span>
+                                    </span>
+                                    <input type="text" readonly class="form-control" value="@Model.Telephone" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h3 class="col-sm-2">Adres</h3>
+                                <div class="input-group rounded col-sm-8">
+                                    <span class="input-group-addon input-group-icon">
+                                        <span aria-hidden="true" class="icon icon-pin"></span>
+                                    </span>
+                                    @if (Model.IlID != null && Model.IlceID != null)
+                                    {
+                                        <input type="text" readonly class="form-control" value="@((ViewBag.il as ICollection<iller>).FirstOrDefault(x=>x.id ==Model.IlID).il) / @((ViewBag.ilce as ICollection<ilceler>).FirstOrDefault(x=>x.id ==Model.IlceID).ilce)" />
+
+                                    }
+                                    @if (Model.IlID == null || Model.IlceID == null)
+                                    {
+                                        <input type="text" readonly class="form-control" value="Kayıtlı Adres Yok" />
+
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <a href="/Account/EditProfile" class="btn btn-primary">Düzenle</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

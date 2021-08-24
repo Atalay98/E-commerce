@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "Favorites";
+}
+@using ECommerce_Project.Models
+@model List<Product>
+
+@section body{
+    <!-- Modal small-modal -->
+    <div class="modal fade small-modal" id="small-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label">Favorilerden Ürün Sil</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="mesaj"></p>
+                    <p class="hata"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger prodSil">Evet</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+}
+
+<div class="row">
+    <div class="col-sm-12 col-md-10 col-md-offset-1">
+        @if (Model.Count == 0)
+        {
+            <div class="alert alert-danger">
+                <strong>Favorilerinizde hiç ürün bulunmamaktadır</strong>
+            </div>
+        }
+        else
+        {
+            <div class="block">
+                <div class="block-heading">
+                    <div class="main-text h2">
+                        Favori Ürünler
+                    </div>
+                </div>
+                <div class="block-content-outer">
+                    <div class="block-content-inner">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center"></th>
+                                    <th style="text-align:center">Ürün Adı</th>
+                                    <th style="text-align:center">Fiyat</th>
+                                    <th style="text-align:center">Kategori</th>
+                                    <th style="text-align:center">Stok</th>
+                                    <th style="text-align:center">Marka</th>
+                                    <th style="text-align:center">Açıklama</th>
+                                    <th style="text-align:center">Sil</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Product u in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <img style="width:80px;height:80px; display:block; margin:0 auto; text-align:center" src="@u.Picture" />
+                                        </td>
+
+                                        <th style="text-align:center"><a href="/Product/Detail/@u.ID">@u.Name</a></th>
+                                        <td style="text-align:center">
+                                            @if (u.CampaignID > 0)
+                                            {
+                                                <del>@u.Price₺</del><br /><strong>@u.FinalPrice₺</strong>
+                                            }
+                                            else
+                                            {
+                                                <strong>@u.FinalPrice₺</strong>
+                                            }
+                                        </td>
+                                        <td style="text-align:center">
+                                            @u.Category.CategoryName
+                                        </td>
+                                        <td class=" text-center">
+                                            @if (u.Stock > 10)
+                                            {
+                                                <span>Stok: </span><span class="text-success"><strong>@u.Stock adet var</strong></span>
+                                            }
+                                            else
+                                            {
+                                                <span>Stok: </span><span class="text-warning"><strong>@u.Stock adet kaldı</strong></span>
+                                            }
+                                        </td>
+                                        <td style="text-align:center">@u.Brand.BrandName </td>
+                                        <td style="text-align:center">@u.Description</td>
+                                        <td style="text-align:center">
+                                            <button class="btn btn-danger rounded modalAc" data-toggle="modal" data-target="#small-modal" data-productid="@u.ID" data-productname="@u.Name">Sil</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+    <script>
+        $(".modalAc").click(function () {
+            $(".modal-body>p.hata").html("");
+            var urunadi = $(this).data("productname");
+            $(".modal-body>p.mesaj").html(urunadi + " favorilerden silinsin mi");
+            var id = $(this).data("productid");
+            $(".prodSil").data("productid", id);
+        });
+
+        $(".prodSil").click(function () {
+            var prodID = $(this).data("productid");
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/Account/DeleteFav/" + prodID,
+                    success: function (durum) {
+                        if (durum == 1) {
+                            window.location.replace("/Account/Favorites");
+                        }
+                        else {
+                            $(".modal-body>p.hata").html("Silme anında hata oluştu");
+                        }
+
+                    }
+                });
+        });
+
+
+    </script>
+
+}

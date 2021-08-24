@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "Payment";
+}
+@using ECommerce_Project.Models
+@model User
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Sipariş Adres Detayları
+                </div>
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner">
+                    <form action="/Cart/Payment" method="post" class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">İsim-Soyisim</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" value="@Model.Name @Model.Surname" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">Sehir</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="Sehir" placeholder="Sehir" maxlength="25" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword4" class="col-sm-2 control-label">İlçe</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="Ilce" placeholder="İlçe" maxlength="25" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword5" class="col-sm-2 control-label">Adres</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="Address" placeholder="Adres" maxlength="100" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword" class="col-sm-2 control-label">Ödeme Tipi</label>
+                            <div class="col-sm-10">
+                                <select id="input-demo-v" name="Type" class="form-control" onchange="openCreditCart()">
+                                    <option>Nakit Ödeme</option>
+                                    <option>Kredi Kartı ile Ödeme</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="KrediNo" class="col-sm-2 control-label">Kredi Kartı No</label>
+                            <div class="col-sm-10">
+                                <input id="creditcart" readonly type="text" class="form-control" name="CreditCartNo" placeholder="Kart No" maxlength="16" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ExpiryDate" class="col-sm-2 control-label">Valid (MM/YY)</label>
+                            <div class="col-sm-4">
+                                <input id="expiry" readonly type="text" class="form-control" name="ExpiryDate" placeholder="MM/YY"  maxlength="5" required>
+                            </div>
+                            <label for="Cvv" class="col-sm-2 control-label">CVV</label>
+                            <div class="col-sm-4">
+                                <input id="cvv" type="text" readonly class="form-control" name="Cvv" placeholder="CVV" maxlength="3" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Siparişi Onayla</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+<script>
+    function openCreditCart() {
+        if ($("#input-demo-v").val() == "Kredi Kartı ile Ödeme") {
+            document.getElementById('creditcart').removeAttribute('readonly');
+            document.getElementById('expiry').removeAttribute('readonly');
+            document.getElementById('cvv').removeAttribute('readonly');
+        }
+        else {
+            $('#creditcart').val("");
+            $('#expiry').val("");
+            $('#cvv').val("");
+            document.getElementById('creditcart').setAttribute('readonly', true);
+            document.getElementById('expiry').setAttribute('readonly', true);
+            document.getElementById('cvv').setAttribute('readonly', true);
+        }
+
+    }
+</script>

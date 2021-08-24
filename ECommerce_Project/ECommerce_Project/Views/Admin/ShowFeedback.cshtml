@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewBag.Title = "ShowFeedback";
+}
+@using ECommerce_Project.Models
+@model List<Feedback>
+
+@section body{
+    <!-- Modal small-modal -->
+    <div class="modal fade small-modal" id="small-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label"></h4>
+                </div>
+                <div class="modal-body">
+                    <p class="mesaj"></p>
+                    <p class="hata"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Geri</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Mesajlar
+                </div>
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th style="text-align:center">Gönderen</th>
+                                <th style="text-align:center">Tarih</th>
+                                <th style="text-align:center">Konu</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Feedback f in Model)
+                            {
+                                <tr>
+                                    <td>@f.ID</td>
+                                    <td style="text-align:center"><strong>@f.User.Username</strong> </td>
+                                    <td style="text-align:center"><strong>@f.Date</strong>  </td>
+                                    <td style="text-align:center"><strong>@f.Subject</strong> </td>
+                                    <td>
+                                        <button class="btn btn-primary rounded modalAc" data-toggle="modal" data-target="#small-modal" data-productid="@f.ID" data-mes="@f.Message" data-subject="@f.Subject">
+                                             Görüntüle
+                                        </button>
+                                    </td>
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+
+    <script>
+        $(".modalAc").click(function () {
+            $(".modal-body>p.hata").html("");
+            var mesaj = $(this).data("mes");
+            var konu = $(this).data("subject");
+            $(".modal-header>h4.modal-title").html("Konu: "+konu);
+            $(".modal-body>p.mesaj").html(mesaj);
+
+        });
+
+    </script>
+}

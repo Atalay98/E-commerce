@@ -1,0 +1,184 @@
+﻿
+@{
+    ViewBag.Title = "EditProfile";
+}
+
+@using System.Collections.Generic
+@using System.Collections
+@using ECommerce_Project.Models
+@model User
+
+<div class="container">
+    <div class="main-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block">
+                    <div class="block-heading">
+                        <div class="main-text h2">
+                            Kullanıcı Bilgileri
+                        </div>
+                    </div>
+                    <div class="block-content-outer">
+                        <div class="block-content-inner">
+                            <form action="/Account/EditProfile" method="post" role="form">
+                                <input type="hidden" name="ID" class="form-control" value="@Model.ID" />
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">Kullanıcı Adı</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="icon icon-user"></span>
+                                        </span>
+                                        <input type="text" readonly class="form-control" value="@Model.Username" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">İsim</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="icon icon-user"></span>
+                                        </span>
+                                        <input type="text" readonly class="form-control" value="@Model.Name" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">Soyisim</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="icon icon-user"></span>
+                                        </span>
+                                        <input type="text" readonly class="form-control" value="@Model.Surname" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">Email</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="icon icon-mail"></span>
+                                        </span>
+                                        <input type="text" class="form-control" name="Mail" value="@Model.Mail" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">Telefon</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="icon icon-telephone"></span>
+                                        </span>
+                                        <input type="text" class="form-control phone_us" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="11" name="Telephone" value="@Model.Telephone" placeholder="@Model.Telephone" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">Doğum Tarihi</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="icon glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                        @if (Model.Birthday != null)
+                                        {
+                                            <input type="text" class="form-control" name="Birthday" value="@Model.Birthday" />
+                                            
+
+                                        }
+                                        @if (Model.Birthday == null)
+                                        {
+                                            <input type="date" class="placeholder form-control" autocomplete="off" name="Birthday" placeholder="dd/mm/yyyy" />
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">İl</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
+                                        </span>
+                                        @if (Model.IlID != null && Model.IlceID != null)
+                                        {
+                                            <input type="text" id="x" readonly class="form-control" value="@((ViewBag.il as ICollection<iller>).FirstOrDefault(x=>x.id ==Model.IlID).il)" />
+                                            <input type="hidden" id="iltxt" name="IlID" value="@Model.IlID" />
+                                            @Html.DropDownList("Drpil", new SelectList(ViewBag.il, "id", "il"), "--İl Seçiniz--", new { @onChange = "selectedil(this)", @class = "form-control" })
+                                        }
+                                        @if (Model.IlID == null && Model.IlceID == null)
+                                        {
+                                            <input type="hidden" id="iltxt" name="IlID" value="1" />
+                                            @Html.DropDownList("Drpil", new SelectList(ViewBag.il, "id", "il"), "--İl Seçiniz--", new { @onChange = "selectedil(this)", @class = "form-control" })
+
+
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="col-sm-2">İlçe</h3>
+                                    <div class="input-group rounded col-sm-8">
+                                        <span class="input-group-addon input-group-icon">
+                                            <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
+                                        </span>
+                                        @if (Model.IlID != null && Model.IlceID != null)
+                                        {
+                                            <input type="text" id="y" readonly class="form-control" value="@((ViewBag.ilce as ICollection<ilceler>).FirstOrDefault(x=>x.id ==Model.IlceID).ilce)" />
+                                            <input type="hidden" id="ilcetxt" name="IlceID" value="@Model.IlceID" />
+                                            @Html.DropDownList("Drpilce", new SelectList(ViewBag.ilce, "id", "ilce"), "--İlçe Seçiniz--", new { @onChange = "selectedilce(this)", @class = "form-control" })
+
+                                        }
+                                        @if (Model.IlID == null && Model.IlceID == null)
+                                        {
+                                            <input type="hidden" id="ilcetxt" name="IlceID" value="1" />
+                                            @Html.DropDownList("Drpilce", new SelectList(ViewBag.ilce, "id", "ilce"), "--İlçe Seçiniz--", new { @onChange = "selectedilce(this)", @class = "form-control" })
+
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <a href="/Account/UserProfile" class="btn btn-danger">İptal</a>
+
+                                </div>
+                                <button type="submit" class="btn btn-primary">Kaydet</button>
+                            </form>
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function selectedil(ddlitem)
+    {
+        var selvalue = ddlitem.value;
+        var seltxt = ddlitem.options[ddlitem.selectedIndex].innerHTML;
+        $("#iltxt").val(selvalue);
+
+        var id = $('#Drpil').val();
+        if (id < 1) {
+            id = 0;
+        }
+        $.ajax({
+            url: '/Account/ilceGetir',
+            data: { ilId: id },
+            type: "POST",
+            dataType: "Json",
+            success: function (data) {
+                console.log(data);
+                $('#Drpilce').empty();
+                if (id == 0) {
+                    $('#Drpilce').append("<option value='0'>--İlçe Seçiniz--</Option>");
+                }
+                
+                for (var i = 0; i < data.length; i++) {
+                    $('#Drpilce').append("<option value='" + data[i].Value + "'>" + data[i].Text + "</Option>");
+                }
+            }
+        });
+
+    }
+
+    function selectedilce(ddlitem) {
+        var selvalue = ddlitem.value;
+        var seltxt = ddlitem.options[ddlitem.selectedIndex].innerHTML;
+        $("#ilcetxt").val(selvalue);
+
+    }
+</script>

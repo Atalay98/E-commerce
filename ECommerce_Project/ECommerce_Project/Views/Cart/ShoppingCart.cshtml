@@ -1,0 +1,121 @@
+﻿@using ECommerce_Project.Models
+@model Session
+
+<style>
+
+    .dropdown .dropdown-menu {
+        padding: 20px;
+        top: 30px !important;
+        width: 350px !important;
+        left: -160px !important;
+        box-shadow: 0px 5px 30px black;
+    }
+
+    .total-header-section {
+        border-bottom: 1px solid #d2d2d2;
+    }
+
+    .total-section p {
+        margin-bottom: 20px;
+    }
+
+    .cart-detail {
+        padding: 15px 0px;
+    }
+
+    .cart-detail-img img {
+        width: 100%;
+        height: 100%;
+        padding-left: 15px;
+    }
+
+    .cart-detail-product p {
+        margin: 0px;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .cart-detail .price {
+        font-size: 12px;
+        margin-right: 10px;
+        font-weight: 500;
+    }
+
+    .cart-detail .count {
+        color: #C2C2DC;
+    }
+
+    .checkout {
+        border-top: 1px solid #d2d2d2;
+        padding-top: 15px;
+    }
+
+        .checkout .btn-primary {
+            border-radius: 50px;
+            height: 50px;
+        }
+
+    .dropdown-menu:before {
+        content: " ";
+        position: absolute;
+        top: -20px;
+        right: 50px;
+        border: 10px solid transparent;
+        border-bottom-color: #fff;
+    }
+</style>
+
+<li>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="dropdown">
+                <button type="button" class="btn btn-info" data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></i> Sepetim
+                    <span class="badge badge-pill badge-danger">@Model.Cart_Product.Count</span>
+                    <i class="icon icon-arrow-down-bold-round icon-size-small"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <div class="row total-header-section">
+                        <div class="col-lg-6 col-sm-6 col-6">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span class="badge badge-pill badge-danger">@Model.Cart_Product.Count</span>
+                        </div>
+                        <div class="col-lg-6 col-sm-6 col-6 total-section text-right">
+                            <p>Toplam: <span class="text-info"></span>@Model.TotalPrice ₺</p>
+                        </div>
+                    </div>
+                    @foreach (Cart_Product p in Model.Cart_Product.ToList())
+                    {
+                        <div class="row cart-detail">
+                            <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+                                <img src="@p.Product.Picture">
+                            </div>
+                            <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+                                <p>@p.Product.Name</p>
+                                <span class="price text-info"> @p.Product.FinalPrice ₺</span>
+                                <span class="count"> Adet: @p.ProductCount</span>
+                                @*<button class="btn btn-danger modalAc" data-toggle="modal" data-target="#small-modal" data-productid="@p.ProductID" data-productname="@p.Product.Name">X</button>*@
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12 col-12 text-center checkout">
+                            <a href="/Cart/Checkout" class="btn btn-primary btn-block" role="button">Sepeti Görüntüle</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</li>
+
+
+<script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+
+<script>
+    $('.dropdown-menu').on('click', function (e) {
+        e.stopPropagation();
+    });
+
+</script>

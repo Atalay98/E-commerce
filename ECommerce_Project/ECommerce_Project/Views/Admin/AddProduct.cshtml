@@ -1,0 +1,165 @@
+﻿
+@{
+    ViewBag.Title = "AddProduct";
+}
+
+@using System.Collections.Generic
+@using System.Collections
+@using ECommerce_Project.Models
+@model Product
+
+<main class="main mt-lg-4">
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block">
+                        <div class="block-heading">
+                            <div class="main-text h2">
+                                Ürün Ekleme ve Güncelleme
+                            </div>
+                            <div class="block-controls">
+                                <a href="/Admin/Index">Geri Dön</a>
+                                <span aria-hidden="true" class="icon icon-arrow-down icon-size-medium block-control-collapse"></span>
+                            </div>
+                        </div>
+                        <div class="block-content-outer">
+                            <div class="block-content-inner">
+                                <form action="/Admin/AddProduct" method="post" role="form">
+                                    @if (Model != null)
+                                    {
+                                        <input type="hidden" name="ID" value="@Model.ID" />
+                                    }
+                                    <div class="form-group">
+                                        <label>Ürün Adı</label>
+                                        @if (Model.Name == null)
+                                        {
+                                            <input value="" class="form-control" type="text" name="Name" placeholder="Ürün adı giriniz" maxlength="50" required />
+                                        }
+                                        else
+                                        {
+                                            <input value="@Model.Name" class="form-control" type="text" name="Name" placeholder="Ürün adı giriniz" required />
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fiyat</label>
+                                        @if (Model.Price > 0)
+                                        {
+                                            <input value="@Model.Price" class="form-control" type="text" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" name="Price" required />
+                                        }
+                                        else
+                                        {
+                                            <input value="" class="form-control" type="text" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" name="Price" placeholder="Fiyat" required />
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Resim</label>
+                                        @if (Model.Picture == null)
+                                        {
+                                            <input value="" class="form-control" type="text" name="Picture" placeholder="Resim url giriniz" required />
+                                        }
+                                        else
+                                        {
+                                            <input value="@Model.Picture" class="form-control" type="text" name="Picture" placeholder="resim" required />
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Stok Miktarı</label>
+                                        @if (Model.Stock > 0)
+                                        {
+                                            <input value="@Model.Stock" class="form-control" type="number" min="0" name="Stock" placeholder="" required />
+                                        }
+                                        else
+                                        {
+                                            <input value="" class="form-control" type="number" min="0" name="Stock" placeholder="Stok miktarı giriniz" required />
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kategori</label>
+                                        @if (Model.CategoryID > 0)
+                                        {
+                                            <input value="@((ViewBag.category as ICollection<Category>).FirstOrDefault(x=>x.ID ==Model.CategoryID).CategoryName)" class="form-control" type="text" name="asd" readonly />
+                                            <input value="@Model.CategoryID" class="form-control" type="hidden" name="CategoryID" />
+                                        }
+                                        else
+                                        {
+                                            <input value="1" type="hidden" id="catid" name="CategoryID" readonly="readonly" />
+                                            @Html.DropDownList("Drpcategory", new SelectList(ViewBag.category, "ID", "CategoryName"), new { @onChange = "selectedcategory(this)", @class = "form-control" })
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Marka</label>
+                                        @if (Model.BrandID > 0)
+                                        {
+                                            <input value="@((ViewBag.brand as ICollection<Brand>).FirstOrDefault(x=>x.ID ==Model.BrandID).BrandName)" class="form-control" type="text" name="brn" readonly />
+                                            <input value="@Model.BrandID" class="form-control" type="hidden" name="BrandID" />
+                                        }
+                                        else
+                                        {
+                                            <input value="1" type="hidden" id="brandid" name="BrandID" readonly="readonly" />
+                                            @Html.DropDownList("Drpbrand", new SelectList(ViewBag.brand, "ID", "BrandName"), new { @onChange = "selectedbrand(this)", @class = "form-control" })
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Açıklama</label>
+                                        @if (Model.Description == null)
+                                        {
+                                            <input value="" class="form-control" type="text" name="Description" max="500" placeholder="Açıklama giriniz" required />
+                                        }
+                                        else
+                                        {
+                                            <input value="@Model.Description" max="500" class="form-control" type="text" name="Description" placeholder="resim" required />
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kampanya</label>
+                                        @if (Model.CampaignID > 0)
+                                        {
+
+                                            <input type="text" id="x" readonly class="form-control" value="@(Model.Campaign.CampaignName)" />
+                                            <input type="hidden" id="campaignid" name="CampaignID" value="0" />
+                                            @Html.DropDownList("Drpcampaign", new SelectList(ViewBag.campaign, "value", "text"), "--Kampanya Seçiniz--", new { @onChange = "selectedcampaign(this)", @class = "form-control" })
+                                        }
+                                        else
+                                        {
+                                            <input value="0" type="hidden" id="campaignid" name="CampaignID" />
+                                            @Html.DropDownList("Drpcampaign", new SelectList(ViewBag.campaign, "value", "text"), "--Kampanya Seçiniz--", new { @onChange = "selectedcampaign(this)", @class = "form-control" })
+                                        }
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    function selectedcategory(ddlitem) {
+        var selvalue = ddlitem.value; //index
+        var seltxt = ddlitem.options[ddlitem.selectedIndex].innerHTML; //value
+        $("#catid").val(selvalue);
+
+    }
+
+    function selectedbrand(ddlitem) {
+        var selvalue = ddlitem.value;
+        var seltxt = ddlitem.options[ddlitem.selectedIndex].innerHTML;
+        $("#brandid").val(selvalue);
+
+    }
+
+    function selectedcampaign(ddlitem) {
+        var selvalue = ddlitem.value;
+        var seltxt = ddlitem.options[ddlitem.selectedIndex].innerHTML;
+        if (selvalue >0) {
+            $("#campaignid").val(selvalue);
+        }
+        else {
+            $("#campaignid").val(0);
+        }
+
+    }
+</script>

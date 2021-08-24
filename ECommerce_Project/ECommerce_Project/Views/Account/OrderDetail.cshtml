@@ -1,0 +1,158 @@
+﻿
+@{
+    ViewBag.Title = "OrderDetail";
+}
+@using ECommerce_Project.Models
+@model Order
+
+<main class="main mt-lg-4">
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block">
+                        <div class="block-heading">
+                            <div class="main-text h2">
+                                Sipariş #@Model.ID - @Model.User.Name @Model.User.Surname
+                            </div>
+                        </div>
+                        <div class="block-content-outer">
+                            <div class="block-content-inner">
+                                <div id="order-view-content" class="table-responsive">
+                                    <ul id="order-view-tabs" class="nav nav-tabs tabs-left">
+                                        <li class="active"><a href="#order-view-tabs-order-details" data-toggle="tab">Sipariş Özet</a></li>
+                                        <li class=""><a href="#order-view-tabs-payment" data-toggle="tab">Sipariş Adresi</a></li>
+                                        <li class=""><a href="#order-view-tabs-products" data-toggle="tab">Siparişteki Ürünler</a></li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div id="order-view-tabs-order-details" class="tab-pane active">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="col-md-3">Sipariş ID</td>
+                                                        <td class="col-md-9">#@Model.ID</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Müşteri İsim</td>
+                                                        <td class="col-md-9">@Model.User.Name @Model.User.Surname</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Kullanıcı Adı</td>
+                                                        <td class="col-md-9">@Model.User.Username</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Email</td>
+                                                        <td class="col-md-9">@Model.User.Mail</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Telefon</td>
+                                                        <td class="col-md-9">@Model.User.Telephone</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Toplam Tutar</td>
+                                                        <td class="col-md-9">@(Model.TotalPrice)₺</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Sipariş Durumu</td>
+                                                        <td class="col-md-9">
+                                                            @if (Model.Status == "Tamamlandı")
+                                                            {
+                                                                <span class="label label-success">Tamamlandı</span>
+                                                            }
+                                                            else if (Model.Status == "Kargoda")
+                                                            {
+                                                                <span class="label label-warning">Kargoda</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="label label-danger">İptal</span>
+                                                            }
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Sipariş Tarihi:</td>
+                                                        <td class="col-md-9">@Model.OrderDate</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane" id="order-view-tabs-payment">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="col-md-3">İsim</td>
+                                                        <td class="col-md-9">@Model.User.Name</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Soyisim</td>
+                                                        <td class="col-md-9">@Model.User.Surname</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Adres</td>
+                                                        <td class="col-md-9">@Model.Payment.Address</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Şehir</td>
+                                                        <td class="col-md-9">@Model.Payment.Sehir</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">İlçe</td>
+                                                        <td class="col-md-9">@Model.Payment.Ilce</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="col-md-3">Ödeme Türü</td>
+                                                        <td class="col-md-9">@Model.Payment.Type</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane" id="order-view-tabs-products">
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Ürün</th>
+                                                        <th>Kategori/Marka</th>
+                                                        <th class="text-right">Adet</th>
+                                                        <th class="text-right">Birim Fiyat</th>
+                                                        <th class="text-right">Toplam Tutar</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (Order_Product op in Model.Order_Product)
+                                                    {
+                                                        <tr>
+                                                            <td>@op.Product.Name</td>
+                                                            <td>@(op.Product.Category.CategoryName)/@(op.Product.Brand.BrandName)</td>
+                                                            <td class="text-right">@op.ProductCount</td>
+                                                            <td class="text-right">@(op.ProductPrice)₺</td>
+                                                            <td class="text-right">@(op.ProductPrice * op.ProductCount)₺</td>
+                                                        </tr>
+                                                    }
+
+                                                    <tr>
+                                                        <td class="text-right" colspan="4">Ürün Tutarı</td>
+                                                        <td class="text-right">@(Model.TotalProductsPrice)₺</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-right" colspan="4">Kargo Ücreti(@Model.Cargo.CargoName)</td>
+                                                        <td class="text-right">@(Model.Cargo.Price)₺</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-right" colspan="4">Sipariş Toplam Tutar</td>
+                                                        <td class="text-right">@(Model.TotalPrice)₺</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+

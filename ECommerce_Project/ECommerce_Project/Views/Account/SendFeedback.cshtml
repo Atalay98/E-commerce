@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewBag.Title = "SendFeedback";
+}
+
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div class="well well-sm">
+            <form class="form-horizontal" role="form" action="/Account/SendFeedback" method="post">
+                <fieldset>
+                    <legend class="text-center"></legend>
+                    <input name="UserID" type="hidden" value="@ViewBag.user.ID">
+                    <!-- Name input-->
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="name">Kullanıcı Adı</label>
+                        <div class="col-md-9">
+                            <input type="text" value="@ViewBag.user.Username" readonly class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="email">Konu</label>
+                        <div class="col-md-9">
+                            <input id="subject" name="Subject" type="text" maxlength="25" placeholder="Mesaj Konusu" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- Message body -->
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="message">Mesaj</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control" id="message" name="Message" placeholder="Mesajınızı buraya giriniz..." maxlength="500" rows="5"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Form actions -->
+                    <div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                            <span class="icon icon-air-plane icon-size-medium"></span> Gönder</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>

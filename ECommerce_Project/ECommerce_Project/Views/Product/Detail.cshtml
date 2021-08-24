@@ -1,0 +1,358 @@
+﻿
+@{
+    ViewBag.Title = "Detail";
+}
+@using System.Collections.Generic
+@using System.Collections
+@using ECommerce_Project.Models
+@model Product
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+
+            <div class="block-heading">
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner clearfix">
+                    <div class="col-md-4" style="text-align:center">
+                        <img class="img-responsive" src="@Model.Picture" sstyle="object-fit: cover;margin:auto" alt="">
+
+                    </div>
+                    <div class="col-md-8" style="text-align:left">
+                        <div class="panel panel-info" style="text-align:center">
+                            <div class="panel-heading">
+                                <h1 class="panel-title">@Model.Name</h1>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <br />
+                                <h4><strong>Ürün Açıklaması :</strong> @Model.Description</h4>
+                                <br />
+                                @if (Model.Campaign == null)
+                                {
+                                    <h2 style="color:coral">@Model.Price ₺</h2>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-4" style="text-align:right">
+                                            <h2><del>@Model.Price ₺</del></h2>
+                                        </div>
+                                        <div class="col-md-4" style="text-align:left">
+                                            <h2 style="color:coral">@(Model.FinalPrice) ₺</h2>
+                                        </div>
+                                        <div class="col-md-2"></div>
+                                    </div>
+                                }
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h2><strong>Kategori : </strong> @Model.Category.CategoryName</h2>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h2><strong>Marka : </strong> @Model.Brand.BrandName</h2>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <br />
+                                        @{
+                                            double rate = 0;
+                                            int reviewNumber = 0;
+                                            foreach (Review r in ViewBag.review)
+                                            {
+                                                rate += Convert.ToDouble(r.Rating);
+                                                reviewNumber += 1;
+                                            }
+                                            if (reviewNumber != 0)
+                                            {
+                                                rate = rate / reviewNumber;
+                                                rate = (double)System.Math.Round(rate, 1);
+                                            }
+
+                                        }
+
+                                        <h3 class="bold padding-bottom-7">@rate <small>/ 5</small></h3>
+                                        @for (int i = 1; i < 6; i++)
+                                        {
+                                            if (i <= rate)
+                                            {
+                                                <span class="icon icon-star" aria-hidden="true" style="color:orange"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="icon icon-star" aria-hidden="true"></span>
+                                            }
+                                        }
+                                        <h3>@Model.Reviews.Count değerlendirme</h3>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <br />
+                                        <br />
+                                        <h2>Stokta <strong>@Model.Stock</strong> adet</h2>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="panel-footer">
+                                @if (ViewBag.cp < Model.Stock)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-2" style="text-align:right">
+                                            <h3>Adet</h3>
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" id="quantity" onchange="checkQuantity(@ViewBag.cp)" type="number" min="1" max="@Model.Stock" value="1" step="1" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-default rounded" onclick="addtocart(@Model.ID)">
+                                                <span class="glyphicon glyphicon-shopping-cart"></span>
+                                                Sepete Ekle
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-md-2" style="text-align:right">
+                                            <h3>Adet</h3>
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" disabled id="quantity" onchange="checkQuantity(@ViewBag.cp)" type="number" min="1" max="@Model.Stock" value="1" step="1" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-default rounded" disabled onclick="addtocart(@Model.ID)">
+                                                <span class="glyphicon glyphicon-shopping-cart"></span>
+                                                Sepete Ekle
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.hasReview == 0)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="block">
+                <div class="block-heading">
+                    <div class="main-text h2">
+                        Yorum Ekle
+                    </div>
+                    <div class="block-controls">
+                        <span aria-hidden="true" class="icon icon-arrow-down icon-size-medium block-control-collapse"></span>
+                    </div>
+                </div>
+                <div class="block-content-outer">
+                    <form action="/Product/AddReview" method="post" role="form">
+                        <input type="hidden" name="ProductID" value="@Model.ID" />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
+                                <select class="form-control" id="Rating" name="Rating">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-pencil"></i>
+                                </span>
+                                <textarea name="Comment" class="form-control" id="Comment" maxlength="250" placeholder="Yorumunuz"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="block">
+                <div class="block-heading">
+                    <div class="main-text h2">
+                        Yorumum
+                    </div>
+                    <div class="block-controls">
+                        <span aria-hidden="true" class="icon icon-arrow-down icon-size-medium block-control-collapse"></span>
+                    </div>
+                </div>
+                <div class="block-content-outer">
+                    <form action="/Product/AddReview" method="post" role="form">
+                        <input type="hidden" name="ProductID" value="@Model.ID" />
+                        <div class="col-lg-3">
+                            <h3>Kullanıcı Adı: <strong>@ViewBag.userReview.User.Username</strong> </h3>
+                            <h3>Tarih: <strong>@ViewBag.userReview.Date</strong> </h3>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
+                                    <select class="form-control" id="Rating" name="Rating">
+                                        @for (int i = 1; i < 6; i++)
+                                        {
+                                            if (ViewBag.userReview.Rating == i)
+                                            {
+                                                <option value="@i" selected>@i</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="glyphicon glyphicon-pencil"></i>
+                                    </span>
+                                    <textarea name="Comment" class="form-control" id="Comment" maxlength="250" placeholder="Yorumunuz">@ViewBag.userReview.Comment</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <a href="/Product/RemoveReview/?productid=@Model.ID" class="btn btn-danger">Yorumu Sil</a>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Yorumlar
+                </div>
+                <div class="block-controls">
+                    <span aria-hidden="true" class="icon icon-arrow-down icon-size-medium block-control-collapse"></span>
+                </div>
+            </div>
+            <div class="block-content-outer">
+                @foreach (Review r in ViewBag.review)
+                {
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h3>Kullanıcı Adı: <strong>@r.User.Username</strong> </h3>
+                            <h3>Tarih : <strong>@r.Date</strong> </h3>
+                        </div>
+                        <div class="col-md-9">
+                            <h3 class="bold padding-bottom-7">@r.Rating <small>/ 5</small></h3>
+                            @for (int i = 1; i < 6; i++)
+                            {
+                                if (i <= r.Rating)
+                                {
+                                    <span class="icon icon-star" aria-hidden="true" style="color:orange"></span>
+                                }
+                                else
+                                {
+                                    <span class="icon icon-star" aria-hidden="true"></span>
+                                }
+                            }
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-pencil"></i>
+                                </span>
+                                <p class="form-control" readonly>@r.Comment</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function checkQuantity(item) {
+        var id = $('#quantity').val();
+        if (id < 1) {
+            $("#quantity").val(1);
+        }
+        else {
+            var x = id - (-item);
+            if (x >@Model.Stock) {
+                $("#quantity").val(@Model.Stock - item);
+                }
+            else {
+                $("#quantity").val(id);
+            }
+        }
+
+    }
+
+    function addtocart(item) {
+        var prodid = item;
+
+        $.ajax({
+            url: '/Cart/AddToCart',
+            data: {
+                productID: prodid,
+                quantity: $("#quantity").val()},
+            type: "POST",
+            success: function (i) {
+                if (i == 1) {
+                    window.location.replace("/Product/Detail/" + prodid);
+                }
+            }
+
+
+        });
+    }
+    $(function () {
+        $("#btnSubmit").click(function () {
+            var formData = new FormData();
+            formData.append("productid", $("#productid").val());
+            formData.append("rate", $("#rate").val());
+            formData.append("comment", $("#comment").val());
+            $.ajax({
+                url: "/Product/AddReview/" + formData,
+                type: 'POST',
+
+                success: function () {
+                    window.location.replace("/Product/Detail/" + $("#productid").val());
+                }
+            });
+        });
+    });
+</script>

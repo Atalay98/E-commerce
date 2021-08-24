@@ -1,0 +1,333 @@
+﻿
+@{
+    ViewBag.Title = "Checkout";
+}
+@using ECommerce_Project.Models
+@model Session
+
+
+@section body{
+    <!-- Modal small-modal -->
+    <div class="modal fade small-modal" id="small-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label">Sepetten Ürün Sil</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="mesaj"></p>
+                    <p class="hata"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger prodSil">Evet</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+}
+
+<div class="row">
+    <div class="col-sm-12 col-md-10 col-md-offset-1">
+        @if (Model.Cart_Product.Count == 0)
+        {
+            <div class="alert alert-danger">
+                <strong>Sepetinizde ürün bulunmamaktadır</strong>
+                <a href="/Product/Index" role="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-shopping-cart"></span> Alışverişe Devam Et
+                </a>
+            </div>
+
+        }
+        else
+        {
+            <table class="table table-hover" id="test">
+                <thead>
+                    <tr>
+                        <th style="text-align:center">Ürün</th>
+                        <th style="text-align:center">Adet</th>
+                        <th class="text-center">Birim Fiyat</th>
+                        <th class="text-center">Toplam</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Cart_Product p in Model.Cart_Product.ToList())
+                    {
+                        <tr>
+                            <td class="col-md-6">
+                                <div class="media">
+                                    <a class="thumbnail pull-left" href="#"> <img class="media-object" src="@p.Product.Picture" style="width: 72px; height: 72px;"> </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading"><a href="/Product/Detail/@p.Product.ID">@p.Product.Name</a></h4>
+                                        <h5 class="media-heading"> <strong>@p.Product.Category.CategoryName / @p.Product.Brand.BrandName</strong> </h5>
+                                        @if (p.Product.Stock > 10)
+                                        {
+                                            <span>Stok: </span><span class="text-success"><strong>@p.Product.Stock adet var</strong></span>
+                                        }
+                                        else
+                                        {
+                                            <span>Stok: </span><span class="text-warning"><strong>@p.Product.Stock adet kaldı</strong></span>
+                                        }
+
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="col-sm-1 col-md-3 text-center">
+                                <div class="input-group">
+
+                                    <span class="input-group-btn">
+
+                                        <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="quant[@p.ProductID]" data-id="@p.ProductID">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+
+                                    </span>
+                                    <input type="text" readonly id="quantity-@p.ProductID" name="quant[@p.ProductID]" class="form-control input-number" value="@p.ProductCount" min="1" max="@p.Product.Stock" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" onchange="checkValue(@p.Product.Stock, @p.ProductID)">
+
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[@p.ProductID]" data-id="@p.ProductID">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </span>
+
+                                </div>
+                            </td>
+                            @if (p.Product.CampaignID > 0)
+                            {
+                                <td class="col-sm-1 col-md-2 text-center" id="birimprice-@p.ProductID"><del>@p.Product.Price₺</del><br /><strong>@p.Product.FinalPrice₺</strong></td>
+                            }
+                            else
+                            {
+                                <td class="col-sm-1 col-md-2 text-center" id="birimprice-@p.ProductID"><strong>@p.Product.FinalPrice ₺</strong></td>
+                            }
+                            <td class="col-sm-1 col-md-1 text-center" id="price-@p.ProductID"><strong>@(p.Product.FinalPrice*p.ProductCount) ₺</strong></td>
+                            <td class="col-sm-1 col-md-1">
+                                <button class="btn btn-danger rounded modalAc" data-toggle="modal" data-target="#small-modal" data-productid="@p.ProductID" data-productname="@p.Product.Name">Sil</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+
+                        <td>
+                            <input type="text" id="cargoID" readonly="readonly" hidden />
+                            @Html.DropDownList("Drpkargo", (SelectList)ViewBag.cargo, "--Kargo Seçiniz--", new { @onChange = "selectedcargo(this)", @class = "form-control" })
+                        </td>
+                        <td>   </td>
+                        <td>   </td>
+                        <td><h5>Toplam</h5><br><h5>Kargo Ücreti</h5><h3>Toplam Tutar</h3></td>
+                        <td class="text-right">
+
+                            @if (Model.Cargo == null)
+                            {
+                                <h5 id="toplam"><strong>@Model.TotalPrice ₺</strong></h5><br><h5 id="cargo"><strong>0 ₺ </strong></h5>
+                                <h3 id="toplamtutar">@Model.TotalPrice ₺</h3>
+                            }
+                            else
+                            {
+                                <h5 id="toplam"><strong>@Model.TotalPrice ₺</strong></h5><br><h5 id="cargo"><strong>@Model.Cargo.Price ₺ </strong></h5>
+                                <h3 id="toplamtutar">@(Model.TotalPrice + Model.Cargo.Price) ₺</h3>
+                            }
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>   </td>
+                        <td>   </td>
+                        <td>   </td>
+                        <td>
+                            <a href="/Product/Index" role="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-shopping-cart"></span> Alışverişe Devam Et
+                            </a>
+                        </td>
+                        <td>
+                            <!--<a href="/Cart/Payment" role="button" class="btn btn-success disabled" id="confirmcart">
+                                Siparişi Tamamla <span class="glyphicon glyphicon-play"></span>
+                            </a>-->
+
+                            @if (Model.CargoID > 0)
+                            {
+                                <a href="/Cart/Payment" role="button" class="btn btn-success" id="confirmcart">
+                                    Siparişi Tamamla <span class="glyphicon glyphicon-play"></span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="/Cart/Payment" role="button" class="btn btn-success disabled" id="confirmcart">
+                                    Siparişi Tamamla <span class="glyphicon glyphicon-play"></span>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+
+    <script>
+        function selectedcargo(ddlitem) {
+            var selval = ddlitem.value;
+            var seltxt = ddlitem.options[ddlitem.selectedIndex].innerHTML;
+            $("#cargoID").val(selval);
+
+            var id = $('#Drpkargo').val();
+            if (id < 1) {
+                id = 0;
+            }
+            var cargoprice = parseFloat(seltxt.split(" ")[2]).toFixed(2);
+            var toplam = parseFloat(document.getElementById("toplam").innerText.split("₺")[0].replace(',', '.')).toFixed(2); // get the toplam value
+            var toplamtutar = parseFloat(document.getElementById("toplamtutar").innerText.split("₺")[0].replace(',', '.')).toFixed(2); // get the toplamtutar value
+            var cargo = parseFloat(document.getElementById("cargo").innerText.split("₺")[0].replace(',', '.')).toFixed(2); // get the cargo value
+
+            if (id == 0) { // none of cargo selected
+                cargoprice = 0;
+            }
+
+            $("#cargo").html("<strong>" + cargoprice + " ₺</strong>"); // update product price
+            var toplamtutarupdate = (toplamtutar - cargo).toFixed(2).toString().replace('.', ','); // decrease the previous cargo price
+            toplamtutarupdate = (parseFloat(toplamtutarupdate) + parseFloat(cargoprice)).toFixed(2).toString().replace('.', ','); // add the current cargo price
+            $("#toplamtutar").html(toplamtutarupdate + " ₺"); // update
+
+            if (id == 0) { // if none of cargo selected, confirm button disabled
+                document.getElementById("confirmcart").classList.add('disabled');
+            }
+            else { // confirm button be clickable
+                document.getElementById("confirmcart").classList.remove('disabled');
+            }
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/Cart/SaveCargo",
+                    data: { cargoID: id },
+                    success: function () {
+                        /* window.location.replace("/Cart/Checkout");
+                     },
+                     error: function () {
+                         alert("Hata oluştu");*/
+                    }
+                });
+        }
+
+        $(".modalAc").click(function () {
+            $(".modal-body>p.hata").html("");
+            var urunadi = $(this).data("productname");
+            $(".modal-body>p.mesaj").html(urunadi + " sepetten silinsin mi");
+            var id = $(this).data("productid");
+            $(".prodSil").data("productid", id);
+        });
+
+        $(".prodSil").click(function () {
+            var prodID = $(this).data("productid");
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/Cart/DeleteProduct/" + prodID,
+                    success: function (durum) {
+                        if (durum == 1) {
+                            window.location.replace("/Cart/Checkout");
+                        }
+                        else {
+                            $(".modal-body>p.hata").html("Silme anında hata oluştu");
+                        }
+
+                    }
+                });
+        });
+
+        $('.btn-number').click(function (e) {
+            e.preventDefault();
+
+            fieldName = $(this).attr('data-field');
+            type = $(this).attr('data-type');
+            var input = $("input[name='" + fieldName + "']");
+            var currentVal = parseInt(input.val());
+            var id = $(this).attr('data-id');
+            var birimprice = 0;
+            if (document.getElementById("birimprice-" + id).innerText.split("₺").length > 2) { // campaign occurs
+                birimprice = parseFloat(document.getElementById("birimprice-" + id).innerText.split("₺")[1].replace(',', '.')).toFixed(2); // get the unit price of product
+            }
+            else { // no campaign
+                birimprice = parseFloat(document.getElementById("birimprice-" + id).innerText.split("₺")[0].replace(',', '.')).toFixed(2); // get the unit price of product
+            }
+            var price = parseFloat(document.getElementById("price-" + id).innerText.split("₺")[0].replace(',', '.')).toFixed(2); // get the product price * count
+            var toplam = parseFloat(document.getElementById("toplam").innerText.split("₺")[0].replace(',', '.')).toFixed(2); // get the toplam value
+            var toplamtutar = parseFloat(document.getElementById("toplamtutar").innerText.split("₺")[0].replace(',', '.')).toFixed(2); // get the toplamtutar value
+
+            if (!isNaN(currentVal)) {
+                if (type == 'minus') {
+
+                    if (currentVal > input.attr('min')) {
+                        input.val(currentVal - 1).change();
+                        var updatedprice = (price - birimprice).toFixed(2).toString().replace('.', ','); //change total product value
+                        $("#price-" + id).html("<strong>" + updatedprice + " ₺</strong>"); // update product price
+                        var toplamupdate = (toplam - birimprice).toFixed(2).toString().replace('.', ','); //change toplam value
+                        $("#toplam").html("<strong>" + toplamupdate + " ₺</strong>"); // update
+                        var toplamtutarupdate = (toplamtutar - birimprice).toFixed(2).toString().replace('.', ','); //change toplamtutar product value
+                        $("#toplamtutar").html(toplamtutarupdate + " ₺"); // update
+                        // save to database
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: "/Cart/ProductCountUpdate",
+                                data: { productID: id, isIncrease: false },
+                                success: function () {
+
+                                }
+                            });
+                    }
+
+                } else if (type == 'plus') {
+
+                    if (currentVal < input.attr('max')) {
+                        input.val(currentVal + 1).change();
+                        var updatedprice = (parseFloat(price) + parseFloat(birimprice)).toFixed(2).toString().replace('.', ','); //change total product value
+                        $("#price-" + id).html("<strong>" + updatedprice + " ₺</strong>");
+                        var toplamupdate = (parseFloat(toplam) + parseFloat(birimprice)).toFixed(2).toString().replace('.', ','); //change total product value
+                        $("#toplam").html("<strong>" + toplamupdate + " ₺</strong>");
+                        var toplamtutarupdate = (parseFloat(toplamtutar) + parseFloat(birimprice)).toFixed(2).toString().replace('.', ','); //change total product value
+                        $("#toplamtutar").html(toplamtutarupdate + " ₺");
+                        // save to database
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: "/Cart/ProductCountUpdate",
+                                data: { productID: id, isIncrease: true },
+                                success: function () {
+
+                                }
+                            });
+                    }
+
+                }
+            } else {
+                input.val(1);
+            }
+        });
+
+        function checkValue(item, prodid) {
+            var id = $('#quantity-' + prodid).val();
+            if (id < 1) {
+                $("#quantity-" + prodid).val(1);
+            }
+            else if (id > item) {
+                $("#quantity-" + prodid).val(item);
+
+            }
+        }
+
+    </script>
+
+}

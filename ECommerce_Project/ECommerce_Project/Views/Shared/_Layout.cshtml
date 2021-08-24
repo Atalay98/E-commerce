@@ -1,0 +1,271 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="~/Content/assets/images/required/ico/favicon.ico">
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/assets/images/required/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/assets/images/required/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/assets/images/required/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="~/Content/assets/images/required/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="~/Content/assets/images/required/ico/favicon.png">
+
+    <title>@ViewBag.Title</title>
+
+    <!-- Required CSS Files -->
+    <!--bootstrap link
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        -->
+    <!--eski bootstrap dosyası-->
+    <link type="text/css" href="~/Content/assets/css/required/bootstrap/bootstrap.min.css" rel="stylesheet" />
+
+    <link type="text/css" href="~/Content/assets/js/required/jquery-ui-1.11.0.custom/jquery-ui.min.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/js/required/jquery-ui-1.11.0.custom/jquery-ui.structure.min.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/js/required/jquery-ui-1.11.0.custom/jquery-ui.theme.min.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/css/required/mCustomScrollbar/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/css/required/icheck/all.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/fonts/metrize-icons/styles-metrize-icons.css" rel="stylesheet">
+
+    <!-- Optional JS Files -->
+    <link type="text/css" href="~/Content/assets/css/optional/jqvmap/jqvmap.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/css/optional/jqvmap/circloid-jqvmap.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/css/optional/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/css/optional/fullcalendar/circloid-fullcalendar.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/css/optional/fullcalendar/fullcalendar.print.css" rel="stylesheet" media="print" />
+    <!-- add CSS files here -->
+    <!-- More Required CSS Files -->
+    <link type="text/css" href="~/Content/assets/css/styles-core.css" rel="stylesheet" />
+    <link type="text/css" href="~/Content/assets/css/styles-core-responsive.css" rel="stylesheet" />
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="~/Content/assets/js/required/misc/ie10-viewport-bug-workaround.js"></script>
+
+    <!--[if IE 7]>
+    <link type="text/css" href="~/Content/assets/css/required/misc/style-ie7.css" rel="stylesheet">
+    <script type="text/javascript" src="~/Content/assets/fonts/lte-ie7.js"></script>
+    <![endif]-->
+    <!--[if IE 8]>
+    <link type="text/css" href="~/Content/assets/css/required/misc/style-ie8.css" rel="stylesheet">
+    <![endif]-->
+    <!--[if lte IE 8]>
+    <script type="text/javascript" src="~/Content/assets/css/required/misc/excanvas.min.js"></script>
+    <![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="~/Content/https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="~/Content/https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    @RenderSection("head", false)
+</head>
+<body>
+    <div class="container-fluid">
+        <div id="header-container">
+            @Html.Partial("_TopBar")
+        </div>
+    </div>
+    <div id="body-container">
+        <div id="left-column">
+            <div id="mainnav">
+                <ul class="mainnav">
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="menu-item-top">
+                            <a href="/Admin/Index" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-grids icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Ürünler</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Admin/Category" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-layers icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Kategoriler</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Admin/Orders" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-copy-paste-document icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Siparişler</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Admin/ShowFeedback" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-comments icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Mesajlar</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Admin/Users" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-user icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Kullanıcılar</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Admin/Campaigns" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-arrow-multi-line-down icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Kampanyalar</span>
+                            </a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Customer"))
+                    {
+                        <li class="menu-item-top">
+                            <a href="/Product/Index" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-grids icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Ürünler</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            @Html.Action("Categories", "Category")
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Account/Orders" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-copy-paste-document icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Siparişlerim</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Account/Favorites" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-heart icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Favorilerim</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Account/SendFeedback" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-comments icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Mesaj</span>
+                            </a>
+                        </li>
+
+
+                    }
+                    else
+                    {
+                        <li class="menu-item-top">
+                            <a href="/Admin/Index" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-grids icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Ürünler</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Category/Index" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-layers icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Kategoriler</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top">
+                            <a href="/Account/SendFeedback" class="top">
+                                <span class="main-menu-icon">
+                                    <span aria-hidden="true" class="icon icon-comments icon-size-medium"></span>
+                                </span>
+                                <span class="main-menu-text">Mesaj</span>
+                            </a>
+                        </li>
+                        <li class="menu-item-top"></li>
+
+                    }
+
+                </ul>
+            </div>
+        </div>
+
+        <div id="right-column">
+
+
+            <div class="right-column-content">
+                <div class="container">
+                    @{
+                        var mes = "";
+                        if (TempData.ContainsKey("message"))
+                        {
+                            mes = TempData["message"] as string;
+                        }
+                    }
+                    @if (mes != "")
+                    {
+                        <div class="alert alert-success alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @mes
+                        </div>
+                    }
+                    @RenderBody()
+                </div>
+            </div>
+            @Html.Partial("_Footer")
+        </div>
+    </div>
+    <!-- /.container -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- Required JS Files -->
+    @RenderSection("body", false)
+    <script type="text/javascript" src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/jquery-ui-1.11.0.custom/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/jquery.easing.1.3-min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/jquery.mCustomScrollbar.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/misc/jquery.mousewheel-3.0.6.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/misc/retina.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/icheck.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/misc/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/required/circloid-functions.js"></script>
+
+    <!-- Optional JS Files -->
+    <script type="text/javascript" src="~/Content/assets/js/optional/circloid-functions-optional.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/jqvmap/jquery.vmap.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/jqvmap/maps/jquery.vmap.world.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/jqvmap/data/jquery.vmap.sampledata.js"></script>
+    <!-- JQVMap Sample Data -->
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.JUMlib.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.resize.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.tooltip.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.pie.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.stack.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.bubbles.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/flot/jquery.flot.orderBars.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/easy-pie-chart/jquery.easypiechart.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/misc/moment.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/optional/fullcalendar/fullcalendar.min.js"></script>
+    <!-- add optional JS plugin files here -->
+    <!-- REQUIRED: User Editable JS Files -->
+    <script type="text/javascript" src="~/Content/assets/js/script.js"></script>
+    <!-- add additional User Editable files here -->
+    <!-- Demo JS Files -->
+    <script type="text/javascript" src="~/Content/assets/js/demo-files/index.js"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>

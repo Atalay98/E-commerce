@@ -1,0 +1,63 @@
+﻿@using ECommerce_Project.Models
+@model List<Category>
+
+
+<a class="top">
+    <span class="main-menu-icon">
+        <span aria-hidden="true" class="icon icon-block-menu icon-size-medium"></span>
+    </span>
+    <span class="main-menu-text">Menüler</span>
+</a>
+<ul>
+    <li>
+        <a href="#" class="parent">Kategoriler<i class="icon-size-small"></i></a>
+        <ul>
+            @foreach (Category cat in Model)
+            {
+                <li><a href="/Product/?name=category&ID=@cat.ID">@cat.CategoryName (@cat.Products.Count(x => x.isActive == true))</a></li>
+            }
+
+        </ul>
+    </li>
+    <li>
+        <a href="#" class="parent">Markalar<i class="icon-size-small"></i></a>
+        <ul>
+            @foreach (Brand brand in ViewBag.brand)
+            {
+                <li><a href="/Product/?name=brand&ID=@brand.ID">@brand.BrandName (@brand.Products.Count(x => x.isActive == true))</a></li>
+            }
+        </ul>
+    </li>
+</ul>
+
+
+<script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+<script>
+    function getcat(catid) {
+        $.ajax({
+            type: "POST",
+            url: '/Product/GetByCategory',
+            data: { catid: catid },
+            success: function () {
+                /* if (data == 1) {
+                     window.location.replace("/Product/Index");
+                 }*/
+                alert("success");
+            }
+        });
+    }
+
+    function getbrand(brandid) {
+        $.ajax({
+            type: "POST",
+            url: '/Product/GetByBrand',
+            data: { brandid: brandid },
+            success: function () {
+                /* if (data == 1) {
+                     window.location.replace("/Product/Index");
+                 }*/
+
+            }
+        });
+    }
+</script>

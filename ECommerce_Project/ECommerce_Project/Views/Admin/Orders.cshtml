@@ -1,0 +1,155 @@
+﻿
+@{
+    ViewBag.Title = "Orders";
+}
+@using ECommerce_Project.Models
+@model List<Order>
+
+@section body{
+    <!-- Modal small-modal -->
+    <div class="modal fade small-modal" id="small-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label">Sipariş Durumu Güncelleme</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="mesaj"></p>
+                    <p class="hata"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Vazgeç</button>
+                    <button type="button" class="btn btn-danger statusIptal">İptal</button>
+                    <button type="button" class="btn btn-success statusOk">Tamamlandı</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Siparişler
+                </div>
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">#</th>
+                                <th style="text-align:center">Sipariş Tarihi</th>
+                                <th style="text-align:center">Müşteri</th>
+                                <th style="text-align:center">Durum</th>
+                                <th style="text-align:center">Toplam Tutar</th>
+                                <th style="text-align:center">Sipariş Onay</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Order u in Model)
+                            {
+                                <tr>
+                                    <td style="text-align:center">@u.ID </td>
+                                    <th style="text-align:center">@u.OrderDate</th>
+                                    <td style="text-align:center">@u.User.Username</td>
+                                    <td style="text-align:center">
+                                        @if (u.Status == "Kargoda")
+                                        {
+                                            <span class="label label-warning">Kargoda</span>
+                                        }
+                                        else if (u.Status == "Tamamlandı")
+                                        {
+                                            <span class="label label-success">Tamamlandı</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-danger">İptal</span>
+                                        }
+                                    </td>
+                                    <td style="text-align:center">@u.TotalPrice₺</td>
+                                    @if (u.Status == "Kargoda")
+                                    {
+                                        <td style="text-align:center">
+                                           
+                                                <button class="btn btn-primary rounded modalAc" data-toggle="modal" data-target="#small-modal" data-orderid="@u.ID">Güncelle</button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+
+    <script>
+
+        $(".modalAc").click(function () {
+            $(".modal-body>p.hata").html("");
+            $(".modal-body>p.mesaj").html("Kargoda durumlu siparişi güncelle");
+            var id = $(this).data("orderid");
+            $(".statusOk").data("orderid", id);
+            $(".statusIptal").data("orderid", id);
+        });
+
+        $(".statusOk").click(function () {
+            var orderID = $(this).data("orderid");
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/Admin/ChangeOrderStatus",
+                    data: { orderID : orderID, status : "Tamamlandı" },
+                    success: function (durum) {
+                        if (durum == 1) {
+                            window.location.replace("/Admin/Orders");
+                        }
+                        else {
+                            $(".modal-body>p.hata").html("Durum güncelleme anında hata oluştu");
+                        }
+
+                    }
+                });
+        });
+
+        $(".statusIptal").click(function () {
+            var orderID = $(this).data("orderid");
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/Admin/ChangeOrderStatus",
+                    data: { orderID : orderID, status : "İptal" },
+                    success: function (durum) {
+                        if (durum == 1) {
+                            window.location.replace("/Admin/Orders");
+                        }
+                        else {
+                            $(".modal-body>p.hata").html("Durum güncelleme anında hata oluştu");
+                        }
+
+                    }
+                });
+        });
+
+    </script>
+}

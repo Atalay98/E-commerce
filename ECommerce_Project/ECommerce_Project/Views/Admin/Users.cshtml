@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "Users";
+}
+
+@using ECommerce_Project.Models
+@using System.Collections.Generic
+@using System.Collections
+@model List<User>
+
+@section body{
+    <!-- Modal small-modal -->
+    <div class="modal fade small-modal" id="small-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label">Kullanıcı Engelleme</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="mesaj"></p>
+                    <p class="hata"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger userBan">Evet</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Kullanıcılar
+                </div>
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">Kullanıcı Adı</th>
+                                <th style="text-align:center">Email</th>
+                                <th style="text-align:center">Adı</th>
+                                <th style="text-align:center">Soyadı</th>
+                                <th style="text-align:center">Role</th>
+                                <th style="text-align:center">Kayıt Tarihi</th>
+                                <th style="text-align:center">Durum</th>
+                                <th style="text-align:center"></th>
+
+                            </tr>
+                        </thead>
+                        <tbody style="text-align:center">
+                            @foreach (User u in Model)
+                            {
+                                <tr>
+                                    <th style="text-align:center">@u.Username</th>
+                                    <td style="text-align:center">@u.Mail</td>
+                                    <td style="text-align:center">@u.Name</td>
+                                    <td style="text-align:center">@u.Surname</td>
+                                    <td style="text-align:center">
+                                        @((ViewBag.role as ICollection<Role>).FirstOrDefault(x=>x.ID ==u.RoleID).RoleName)
+                                    </td>
+                                    <td style="text-align:center">@u.RegisterDate</td>
+                                    @if (u.Role.RoleName != "Admin")
+                                    {
+                                        if (u.IsActive == false)
+                                        {
+                                            <td class="text-center">
+                                                <span class="icon icon-cross highlight-color-red-text"></span>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-warning rounded modalAc" data-toggle="modal" data-target="#small-modal" data-userid="@u.ID" data-username="@u.Username" data-active="0">Engeli Aç</button>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center">
+
+                                                <span class="icon icon-check highlight-color-green-text"></span>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-danger rounded modalAc" data-toggle="modal" data-target="#small-modal" data-userid="@u.ID" data-username="@u.Username" data-active="1">Engelle</button>
+                                            </td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+
+    <script>
+        $(".modalAc").click(function () {
+            $(".modal-body>p.hata").html("");
+            var ad = $(this).data("username");
+            var active = $(this).data("active");
+            if (active == 1) {
+                $(".modal-body>p.mesaj").html(ad + " isimli kullanıcı engellensin mi");
+            }
+            else {
+                $(".modal-body>p.mesaj").html(ad + " isimli kullanıcının engeli kaldırılsın mı");
+            }
+
+            var id = $(this).data("userid");
+            $(".userBan").data("userid", id);
+            $(".userBan").data("active", active);
+        });
+
+        $(".userBan").click(function () {
+            var userid = $(this).data("userid");
+            var active = $(this).data("active");
+            if (active == 1) {
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/Admin/BanUser/" + userid,
+                        success: function () {
+                            window.location.replace("/Admin/Users");
+                        },
+                        error: function () {
+                            alert("Hata oluştu");
+                        }
+                    });
+            }
+            else {
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/Admin/UnbanUser/" + userid,
+                        success: function () {
+                            window.location.replace("/Admin/Users");
+                        },
+                        error: function () {
+                            alert("Hata oluştu");
+                        }
+                    });
+            }
+
+        });
+    </script>
+}

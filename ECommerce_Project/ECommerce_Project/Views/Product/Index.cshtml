@@ -1,0 +1,224 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@using ECommerce_Project.Models
+@using System.Collections.Generic
+@using System.Collections
+@model List<Product>
+
+<div class="row">
+
+    <div class="col-md-12" style="text-align:center">
+        <div class="col-md-4"></div>
+        <div class="col-md-8">
+            @if (ViewBag.titleName == "")
+            {
+                <h1>
+                    <span aria-hidden="true" class="icon icon-star"></span>
+                    <span class="main-text">
+                        Ürünler
+                    </span>
+                </h1>
+            }
+            else
+            {
+                <h1>
+                    <span aria-hidden="true" class="icon icon-star"></span>
+                    <span class="main-text">
+                        @ViewBag.titleName
+                    </span>
+                </h1>
+            }
+        </div>
+    </div>
+
+    @foreach (Product u in Model)
+    {
+        if (u.isActive == true)
+        {
+            <div class="col-md-4">
+                <div class="panel panel-info" style="text-align:center">
+                    <div class="panel-heading">
+                        <a href="/Product/Detail/@u.ID">
+                            <h2 class="panel-title">@u.Name</h2>
+                        </a>
+                    </div>
+                    <a href="/Product/Detail/@u.ID">
+                        <div class="panel-body">
+                            <img class="card-img-top" style="width: 200px; height: 200px; object-fit: cover;margin:auto" src="@u.Picture" alt="Card image cap">
+
+                        </div>
+                    </a>
+                    <div class="panel-body">
+                        @if (u.Campaign == null)
+                        {
+                            <h3><strong>@u.Price ₺</strong> </h3>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-md-6" style="text-align:right">
+                                    <h3><del>@u.Price ₺</del></h3>
+                                </div>
+                                <div class="col-md-6" style="text-align:left">
+                                    <h3 style="color:coral"><strong>@(u.FinalPrice) ₺</strong> </h3>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="panel-body">
+                        @{
+                            double rate = 0;
+                            int reviewNumber = 0;
+                            foreach (Review review in u.Reviews)
+                            {
+                                rate += Convert.ToDouble(review.Rating);
+                                reviewNumber += 1;
+                            }
+                            if (reviewNumber != 0)
+                            {
+                                rate = rate / reviewNumber;
+                                rate = (double)System.Math.Round(rate, 1);
+                            }
+                        }
+                        <h4 class="bold padding-bottom-7">@rate <small>/ 5</small></h4>
+                        @for (int i = 1; i < 6; i++)
+                        {
+                            if (i <= rate)
+                            {
+                                <span class="icon icon-star icon-size-medium" aria-hidden="true" style="color:orange"></span>
+                            }
+                            else
+                            {
+                                <span class="icon icon-star icon-size-medium" aria-hidden="true"></span>
+                            }
+                        }
+                        <h4>@u.Reviews.Count değerlendirme</h4>
+                    </div>
+                    @if (HttpContext.Current.User.IsInRole("Customer"))
+                    {
+                        <div class="panel-footer">
+                            @{ int fav = 0; // check the product is in user favorites list
+                                foreach (Favorite f in ViewBag.userfav)
+                                {
+                                    if (f.ProductID == u.ID)
+                                    {
+                                        fav = 1;
+                                    }
+                                }
+                                var id = "favSpan" + u.ID;
+                            }
+                            @if (fav == 0)
+                            {
+                                <a>
+                                    <span class="glyphicon glyphicon-heart-empty icon-size-medium" id="fav-@u.ID" data-toggle="tooltip" data-original-title="Favorilere Ekle" onclick="addfav(@u.ID)"></span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a>
+                                    <span class="glyphicon glyphicon-heart icon-size-medium" id="fav-@u.ID" data-toggle="tooltip" data-original-title="Favorilerden Çıkar" onclick="removefav(@u.ID)"></span>
+                                </a>
+                            }
+
+                            @{
+                                int total = u.Stock;
+                                int inCart = 0;
+                                foreach (Cart_Product cp in ViewBag.ses.Cart_Product)
+                                {
+                                    if (cp.ProductID == u.ID)
+                                    {
+                                        inCart += cp.ProductCount;
+                                    }
+                                }
+                            }
+                            @if (inCart + 1 > u.Stock)
+                            {
+                                <button type="button" disabled class="btn btn-default rounded" onclick="addtocart(@u.ID)" id="sepet">
+                                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                                    Sepete Ekle
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-default rounded" onclick="addtocart(@u.ID)" id="sepet">
+                                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                                    Sepete Ekle
+                                </button>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+        }
+
+    }
+
+</div>
+
+
+<script>
+    function addtocart(item) {
+        var prodid = item;
+        $.ajax({
+            type: "POST",
+            url: '/Cart/AddToCart',
+            data: { productID: prodid },
+            success: function (data) {
+                if (data == 1) {
+
+                    window.location.replace("/Product/Index");
+                }
+
+            }
+        });
+    }
+
+    function addfav(item) {
+        $("#fav-" + item).attr("onclick", "removefav(" + item + ")");
+        $("#fav-" + item).removeClass('glyphicon-heart-empty');
+        $("#fav-" + item).addClass('glyphicon-heart');
+        $("#fav-" + item).attr('data-original-title', 'Favorilerden çıkar');
+
+        $.ajax({
+            type: "POST",
+            url: '/Product/AddFav',
+            data: { productID: item },
+            success: function (data) {
+                if (data == 1) {
+                    // window.location.replace("/Product/Index");
+                    /*var id = "favSpan" + item;
+                    document.getElementById(id).className = "glyphicon glyphicon-heart icon-size-medium";
+                    alert($("#" + id).data("original-title"));
+                    $("#" + id).data("original-title", "Favorilerden Çıkar");
+                    alert($("#"+id).data("original-title"));*/
+                }
+
+            }
+        });
+    }
+
+    function removefav(item) {
+        $("#fav-" + item).attr("onclick", "addfav(" + item + ")");
+        $("#fav-" + item).removeClass('glyphicon-heart');
+        $("#fav-" + item).addClass('glyphicon-heart-empty');
+        $("#fav-" + item).attr('data-original-title', 'Favorilere ekle');
+
+        $.ajax({
+            type: "POST",
+            url: '/Product/RemoveFav',
+            data: { productID: item },
+            success: function (data) {
+                if (data == 1) {
+                    //window.location.replace("/Product/Index");
+                    /*var id = "favSpan" + item;
+                    document.getElementById(id).className = "glyphicon glyphicon-heart-empty icon-size-medium";*/
+                }
+
+            }
+        });
+    }
+</script>

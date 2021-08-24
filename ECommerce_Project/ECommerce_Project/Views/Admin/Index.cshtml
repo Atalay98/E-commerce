@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@using ECommerce_Project.Models
+@using System.Collections.Generic
+@using System.Collections
+@model List<Product>
+
+@section body{
+    <!-- Modal small-modal -->
+    <div class="modal fade small-modal" id="small-modal" tabindex="-1" role="dialog" aria-labelledby="small-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" data-border-top="multi">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="small-modal-label">Favorilerden Ürün Sil</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="mesaj"></p>
+                    <p class="hata"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger prodSil">Evet</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="block">
+            <div class="block-heading">
+                <div class="main-text h2">
+                    Ürünler
+                </div>
+                <div class="block-controls">
+
+                    <a href="/Admin/AddProduct" class="btn btn-success rounded">Yeni Ürün Ekle</a>
+
+                </div>
+            </div>
+            <div class="block-content-outer">
+                <div class="block-content-inner">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center"></th>
+                                <th style="text-align:center">Ürün Adı</th>
+                                <th style="text-align:center">Fiyat</th>
+                                <th style="text-align:center">Kategori</th>
+                                <th style="text-align:center">Stok</th>
+                                <th style="text-align:center">Marka</th>
+                                <th style="text-align:center">Açıklama</th>
+                                <th style="text-align:center">Durum</th>
+                                <th style="text-align:center">Güncelle</th>
+                                <th style="text-align:center">Sil</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Product u in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <img style="width:80px;height:80px; display:block; margin:0 auto; text-align:center" src="@u.Picture" />
+                                    </td>
+
+                                    <th style="text-align:center">@u.Name</th>
+                                    <td style="text-align:center">
+                                        @if (u.CampaignID > 0)
+                                        {
+                                            <del>@u.Price₺</del><br /><strong>@u.FinalPrice₺</strong>
+                                        }
+                                        else
+                                        {
+                                            <strong>@u.FinalPrice₺</strong>
+                                        }
+                                    </td>
+                                    <td style="text-align:center">
+                                        @((ViewBag.category as ICollection<Category>).FirstOrDefault(x=>x.ID ==u.CategoryID).CategoryName)
+                                    </td>
+                                    <td style="text-align:center">@u.Stock</td>
+                                    <td style="text-align:center">
+                                        @u.Brand.BrandName
+                                    </td>
+                                    <td style="text-align:center">@u.Description</td>
+                                    @if (u.isActive == false)
+                                    {
+                                        <td class="text-center">
+                                            <span class="icon icon-cross highlight-color-red-text"></span>
+                                        </td>
+                                        <td style="text-align:center">
+                                        </td>
+                                        <td style="text-align:center">
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-center">
+
+                                            <span class="icon icon-check highlight-color-green-text"></span>
+                                        </td>
+                                        if (u.OwnerID == ViewBag.user)
+                                        {
+                                            <td style="text-align:center">
+                                                <a href="/Admin/UpdateProduct/@u.ID" class="btn btn-primary rounded">Güncelle</a>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-danger rounded modalAc" data-toggle="modal" data-target="#small-modal" data-productid="@u.ID" data-productname="@u.Name">Sil</button>
+                                            </td>
+
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                            <td></td>
+                                        }
+                                    }
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/Content/assets/js/required/jquery-1.11.1.min.js"></script>
+
+    <script>
+        $(".modalAc").click(function () {
+            $(".modal-body>p.hata").html("");
+            var urunadi = $(this).data("productname");
+            $(".modal-body>p.mesaj").html(urunadi + " isimli ürün silinsin mi");
+            var id = $(this).data("productid");
+            $(".prodSil").data("productid", id);
+        });
+
+        $(".prodSil").click(function () {
+            var prodID = $(this).data("productid");
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/Admin/DeleteFProduct/" + prodID,
+                    success: function (durum) {
+                        if (durum == 1) {
+                            window.location.replace("/Admin/Index");
+                        }
+                        else {
+                            $(".modal-body>p.hata").html("Silme anında hata oluştu");
+                        }
+
+                    }
+                });
+        });
+    </script>
+}
